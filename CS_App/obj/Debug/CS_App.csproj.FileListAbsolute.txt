@@ -8,3 +8,13 @@ C:\Users\User\Desktop\CS\CS_App\CS_App\obj\Debug\CS_App.csproj.GenerateResource.
 C:\Users\User\Desktop\CS\CS_App\CS_App\obj\Debug\CS_App.csproj.CoreCompileInputs.cache
 C:\Users\User\Desktop\CS\CS_App\CS_App\obj\Debug\CS_App.exe
 C:\Users\User\Desktop\CS\CS_App\CS_App\obj\Debug\CS_App.pdb
+C:\Users\super\Desktop\OpenMP\SBT\CS_repo\CS_App\bin\Debug\CS_App.exe.config
+C:\Users\super\Desktop\OpenMP\SBT\CS_repo\CS_App\bin\Debug\CS_App.exe
+C:\Users\super\Desktop\OpenMP\SBT\CS_repo\CS_App\bin\Debug\CS_App.pdb
+C:\Users\super\Desktop\OpenMP\SBT\CS_repo\CS_App\obj\Debug\CS_App.csprojAssemblyReference.cache
+C:\Users\super\Desktop\OpenMP\SBT\CS_repo\CS_App\obj\Debug\CS_App.Form1.resources
+C:\Users\super\Desktop\OpenMP\SBT\CS_repo\CS_App\obj\Debug\CS_App.Properties.Resources.resources
+C:\Users\super\Desktop\OpenMP\SBT\CS_repo\CS_App\obj\Debug\CS_App.csproj.GenerateResource.cache
+C:\Users\super\Desktop\OpenMP\SBT\CS_repo\CS_App\obj\Debug\CS_App.csproj.CoreCompileInputs.cache
+C:\Users\super\Desktop\OpenMP\SBT\CS_repo\CS_App\obj\Debug\CS_App.exe
+C:\Users\super\Desktop\OpenMP\SBT\CS_repo\CS_App\obj\Debug\CS_App.pdb

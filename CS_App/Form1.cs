@@ -10,6 +10,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml;
 
 namespace CS_App
 {
@@ -280,6 +281,39 @@ namespace CS_App
 
             System.IO.File.WriteAllLines(filePath, lines);
 
+            treeView1.Nodes.Clear();
+            XmlDocument doc = new XmlDocument();
+            doc.Load(filePath);
+            treeView1.Nodes.Add(new TreeNode(doc.DocumentElement.Name));
+            TreeNode tr = new TreeNode();
+            tr = treeView1.Nodes[0];
+            AddNode(doc.DocumentElement, tr);
+            label1.Text = doc.GetElementsByTagName("check_type")[0].Attributes["type"].Value;
+            label2.Text = doc.GetElementsByTagName("group_policy")[0].Attributes["group"].Value;
+        }
+
+        private void AddNode(XmlNode inXmlNode, TreeNode inTreeNode)
+        {
+            XmlNode xNode;
+            TreeNode tNode;
+            XmlNodeList nodeList;
+            int i;
+            if (inXmlNode.HasChildNodes)
+            {
+                nodeList = inXmlNode.ChildNodes;
+
+                for (i = 0; i <= nodeList.Count - 1; i++)
+                {
+                    xNode = inXmlNode.ChildNodes[i];
+                    inTreeNode.Nodes.Add(new TreeNode(xNode.Name));
+                    tNode = inTreeNode.Nodes[i];
+                    this.AddNode(xNode, tNode);
+                }
+            }
+            else
+            {
+                inTreeNode.Text = (inXmlNode.OuterXml).Trim();
+            }
         }
 
     }

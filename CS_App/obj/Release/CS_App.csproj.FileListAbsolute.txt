@@ -1,0 +1,9 @@
+C:\Users\super\Desktop\OpenMP\SBT\CS_repo\CS_App\bin\Release\CS_App.exe.config
+C:\Users\super\Desktop\OpenMP\SBT\CS_repo\CS_App\bin\Release\CS_App.exe
+C:\Users\super\Desktop\OpenMP\SBT\CS_repo\CS_App\bin\Release\CS_App.pdb
+C:\Users\super\Desktop\OpenMP\SBT\CS_repo\CS_App\obj\Release\CS_App.Form1.resources
+C:\Users\super\Desktop\OpenMP\SBT\CS_repo\CS_App\obj\Release\CS_App.Properties.Resources.resources
+C:\Users\super\Desktop\OpenMP\SBT\CS_repo\CS_App\obj\Release\CS_App.csproj.GenerateResource.cache
+C:\Users\super\Desktop\OpenMP\SBT\CS_repo\CS_App\obj\Release\CS_App.csproj.CoreCompileInputs.cache
+C:\Users\super\Desktop\OpenMP\SBT\CS_repo\CS_App\obj\Release\CS_App.exe
+C:\Users\super\Desktop\OpenMP\SBT\CS_repo\CS_App\obj\Release\CS_App.pdb
