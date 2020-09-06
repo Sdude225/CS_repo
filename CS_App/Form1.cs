@@ -49,6 +49,12 @@ namespace CS_App
             return line.StartsWith("#");
         }
 
+        private bool removeAnd(string line)
+        {
+            return line.Contains("&");
+        }
+
+
         private void custom_item(ref List<string> lines, ref int i)
         {
             int k = i;
@@ -91,7 +97,7 @@ namespace CS_App
                     lines[m] = lines[m].Insert(lines[m].Length - 2, "</value_data>");
                     continue;
                 }
-                else if(lines[m].Contains("description"))
+                else if(lines[m].Contains("  description"))
                 {
                     lines[m] = lines[m].Replace("description", "<description>");
                     lines[m] = lines[m].Replace(":", "");
@@ -115,14 +121,14 @@ namespace CS_App
                     lines[m] = lines[m].Insert(lines[m].Length - 2, "</reg_item>");
                     continue;
                 }
-                else if(lines[m].Contains("type"))
+                else if(lines[m].Contains("  type"))
                 {
                     lines[m] = lines[m].Replace("type", "<type>");
                     lines[m] = lines[m].Replace(":", "");
                     lines[m] = lines[m].Insert(lines[m].Length - 2, "</type>");
                     continue;
                 }
-                else if (lines[m].Contains("reference"))
+                else if (lines[m].Contains("  reference"))
                 {
                     lines[m] = lines[m].Replace("reference", "<reference>");
                     lines[m] = lines[m].Replace(":", "");
@@ -145,7 +151,7 @@ namespace CS_App
                     lines[m] = lines[m].Insert(lines[m].Length - 2, "</see_also>");
                     continue;
                 }
-                else if(lines[m].Contains("solution"))
+                else if(lines[m].Contains("  solution"))
                 {
                     lines[m] = lines[m].Replace("solution", "<solution>");
                     lines[m] = lines[m].Replace(":", "");
@@ -160,7 +166,7 @@ namespace CS_App
                     m--;
                     continue;
                 }
-                else if(lines[m].Contains("info"))
+                else if(lines[m].Contains("  info"))
                 {
                     lines[m] = lines[m].Replace("info", "<info>");
                     lines[m] = lines[m].Replace(":", "");
@@ -198,7 +204,7 @@ namespace CS_App
 
             for(m = k + 1; m < j; m++)
             {
-                if(lines[m].Contains("description"))
+                if(lines[m].Contains("  description"))
                 {
                     lines[m] = lines[m].Replace("description", "<description>");
                     lines[m] = lines[m].Replace(":", "");
@@ -206,12 +212,20 @@ namespace CS_App
                     lines[m] = lines[m].Insert(lines[m].Length - 2, "</description>");
                     continue;
                 }
-                else if(lines[m].Contains("info"))
+                else if(lines[m].Contains("  info"))
                 {
                     lines[m] = lines[m].Replace("info", "<info>");
                     lines[m] = lines[m].Replace(":", "");
                     lines[m] = lines[m].Replace('"', ' ');
                     lines[m] = lines[m].Insert(lines[m].Length - 2, "</info>");
+                }
+                else if (lines[m].Contains("see_also"))
+                {
+                    lines[m] = lines[m].Replace("see_also", "<see_also>");
+                    lines[m] = lines[m].Replace(":", "");
+                    lines[m] = lines[m].Replace('"', ' ');
+                    lines[m] = lines[m].Insert(lines[m].Length - 2, "</see_also>");
+                    continue;
                 }
             }
         }
@@ -220,6 +234,7 @@ namespace CS_App
             string[] tmp = fileContent.Split(new[] { "\r\n", "\r", "\n"}, StringSplitOptions.RemoveEmptyEntries);
             var lines = new List<string>(tmp);
             lines.RemoveAll(isComment);
+            lines.RemoveAll(removeAnd);
 
             for(int i = 0; i < lines.Count; i++)
             {
@@ -243,8 +258,17 @@ namespace CS_App
                 }
             }
 
-            foreach (string s in lines)
-                Console.WriteLine(s);
+            int index = lines[0].IndexOf("version");
+            lines[0] = lines[0].Remove(22, (lines[0].Length - 3 - index)).Insert(11, " type");
+
+            lines[1] = lines[1].Insert(13, " group");
+            var filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SBT");
+            System.IO.Directory.CreateDirectory(filePath);
+
+            filePath = Path.Combine(filePath, "policy.xml");
+
+            System.IO.File.WriteAllLines(filePath, lines);
+
         }
 
     }
