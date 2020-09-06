@@ -54,6 +54,17 @@ namespace CS_App
             return line.Contains("&");
         }
 
+        private string replaceFirst(string line, string text, string replace)
+        {
+            int index = line.IndexOf(text);
+            if(index < 0)
+            {
+                return line;
+            }
+
+            return line.Substring(0, index) + replace + line.Substring(index, text.Length);
+        }
+
 
         private void custom_item(ref List<string> lines, ref int i)
         {
@@ -166,9 +177,9 @@ namespace CS_App
                     m--;
                     continue;
                 }
-                else if(lines[m].Contains("  info"))
+                else if(lines[m].Contains("   info"))
                 {
-                    lines[m] = lines[m].Replace("info", "<info>");
+                    lines[m] = replaceFirst(lines[m], "info", "<info>");
                     lines[m] = lines[m].Replace(":", "");
                     lines[m] = lines[m].Replace('"', ' ');
                     m++;
@@ -212,7 +223,7 @@ namespace CS_App
                     lines[m] = lines[m].Insert(lines[m].Length - 2, "</description>");
                     continue;
                 }
-                else if(lines[m].Contains("  info"))
+                else if(lines[m].Contains("   info"))
                 {
                     lines[m] = lines[m].Replace("info", "<info>");
                     lines[m] = lines[m].Replace(":", "");
