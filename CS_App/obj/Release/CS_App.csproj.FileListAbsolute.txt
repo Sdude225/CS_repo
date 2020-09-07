@@ -7,3 +7,4 @@ C:\Users\super\Desktop\OpenMP\SBT\CS_repo\CS_App\obj\Release\CS_App.csproj.Gener
 C:\Users\super\Desktop\OpenMP\SBT\CS_repo\CS_App\obj\Release\CS_App.csproj.CoreCompileInputs.cache
 C:\Users\super\Desktop\OpenMP\SBT\CS_repo\CS_App\obj\Release\CS_App.exe
 C:\Users\super\Desktop\OpenMP\SBT\CS_repo\CS_App\obj\Release\CS_App.pdb
+C:\Users\super\Desktop\OpenMP\SBT\CS_repo\CS_App\obj\Release\CS_App.csprojAssemblyReference.cache

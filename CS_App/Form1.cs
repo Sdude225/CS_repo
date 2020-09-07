@@ -35,7 +35,7 @@ namespace CS_App
             if(file.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 var fileStream = file.OpenFile();
-
+                textBox1.Text = file.SafeFileName;
                 using(StreamReader reader = new StreamReader(fileStream))
                 {
                     fileContent = reader.ReadToEnd();
@@ -274,14 +274,17 @@ namespace CS_App
             lines[0] = lines[0].Remove(22, (lines[0].Length - 3 - index)).Insert(11, " type");
 
             lines[1] = lines[1].Insert(13, " group");
-            var filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SBT");
+            textBox1.Text = textBox1.Text.Remove(textBox1.Text.Length - 5, 5);
+            textBox1.Text += ".xml";           
+            //textBox1.Text = textBox1.Text.Remove();
+            /*var filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SBT");
             System.IO.Directory.CreateDirectory(filePath);
 
-            filePath = Path.Combine(filePath, "policy.xml");
+            filePath = Path.Combine(filePath, textBox1.Text);
 
-            System.IO.File.WriteAllLines(filePath, lines);
+            System.IO.File.WriteAllLines(filePath, lines);*/
 
-            treeView1.Nodes.Clear();
+            /*treeView1.Nodes.Clear();
             XmlDocument doc = new XmlDocument();
             doc.Load(filePath);
             treeView1.Nodes.Add(new TreeNode(doc.DocumentElement.Name));
@@ -289,7 +292,8 @@ namespace CS_App
             tr = treeView1.Nodes[0];
             AddNode(doc.DocumentElement, tr);
             label1.Text = doc.GetElementsByTagName("check_type")[0].Attributes["type"].Value;
-            label2.Text = doc.GetElementsByTagName("group_policy")[0].Attributes["group"].Value;
+            label2.Text = doc.GetElementsByTagName("group_policy")[0].Attributes["group"].Value;*/
+            fText = lines;
         }
 
         private void AddNode(XmlNode inXmlNode, TreeNode inTreeNode)
@@ -316,5 +320,24 @@ namespace CS_App
             }
         }
 
+        List<string> fText = null;
+        private void button2_Click(object sender, EventArgs e)
+        {
+            var filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SBT");
+            System.IO.Directory.CreateDirectory(filePath);
+            filePath = Path.Combine(filePath, textBox1.Text);
+
+            System.IO.File.WriteAllLines(filePath, fText);
+
+            treeView1.Nodes.Clear();
+            XmlDocument doc = new XmlDocument();
+            doc.Load(filePath);
+            treeView1.Nodes.Add(new TreeNode(doc.DocumentElement.Name));
+            TreeNode tr = new TreeNode();
+            tr = treeView1.Nodes[0];
+            AddNode(doc.DocumentElement, tr);
+            label1.Text = doc.GetElementsByTagName("check_type")[0].Attributes["type"].Value;
+            label2.Text = doc.GetElementsByTagName("group_policy")[0].Attributes["group"].Value;
+        }
     }
 }
