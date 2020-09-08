@@ -12,3 +12,5 @@ The logic of the program is to modify .audit so they could be parsed as xml.
 Afterwards, we simply display the xml as a tree view.
 
 In the end we can choose how the new file will be named, and it is saved in AppData/Local/SBT folder.
+
+Video demonstration of inplemented features: https://youtu.be/rJhRBEcN6Vw
