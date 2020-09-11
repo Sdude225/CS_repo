@@ -276,23 +276,6 @@ namespace CS_App
             lines[1] = lines[1].Insert(13, " group");
             textBox1.Text = textBox1.Text.Remove(textBox1.Text.Length - 5, 5);
             textBox1.Text += ".xml";           
-            //textBox1.Text = textBox1.Text.Remove();
-            /*var filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SBT");
-            System.IO.Directory.CreateDirectory(filePath);
-
-            filePath = Path.Combine(filePath, textBox1.Text);
-
-            System.IO.File.WriteAllLines(filePath, lines);*/
-
-            /*treeView1.Nodes.Clear();
-            XmlDocument doc = new XmlDocument();
-            doc.Load(filePath);
-            treeView1.Nodes.Add(new TreeNode(doc.DocumentElement.Name));
-            TreeNode tr = new TreeNode();
-            tr = treeView1.Nodes[0];
-            AddNode(doc.DocumentElement, tr);
-            label1.Text = doc.GetElementsByTagName("check_type")[0].Attributes["type"].Value;
-            label2.Text = doc.GetElementsByTagName("group_policy")[0].Attributes["group"].Value;*/
             fText = lines;
         }
 
@@ -338,6 +321,38 @@ namespace CS_App
             AddNode(doc.DocumentElement, tr);
             label1.Text = doc.GetElementsByTagName("check_type")[0].Attributes["type"].Value;
             label2.Text = doc.GetElementsByTagName("group_policy")[0].Attributes["group"].Value;
+            button3.Visible = true;
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            if (button3.Text == "Select All")
+            {
+                CallRecursive(treeView1, true);
+                button3.Text = "Deselect All";
+            }else
+            {
+                CallRecursive(treeView1, false);
+                button3.Text = "Select All";
+            }
+        }
+
+        private void PrintRecursive(TreeNode treeNode, bool fg)
+        {
+            treeNode.Checked = fg;
+            foreach (TreeNode tn in treeNode.Nodes)
+            {
+                PrintRecursive(tn, fg);
+            }
+        }
+  
+        private void CallRecursive(TreeView treeView, bool fg)
+        {
+            TreeNodeCollection nodes = treeView.Nodes;
+            foreach (TreeNode n in nodes)
+            {
+                PrintRecursive(n, fg);
+            }
         }
     }
 }
