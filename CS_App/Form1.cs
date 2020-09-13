@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -80,12 +81,12 @@ namespace CS_App
             file.Close();
             foreach (List<string> l in fList)
                 l.RemoveAt(0);
-            TreeView tr = new TreeView();
-            tr.Nodes.Add(new System.Windows.Forms.TreeNode().Text = "some");
-            tr.Nodes.Add(new System.Windows.Forms.TreeNode().Text = "anotherthing");
-            foreach (List<string> ls in fList)
-                listBox1.Items.Add(tr);
-                System.Console.WriteLine("\nSize of list is : " + fList[1][1]);
+            for (int i = 0; i < fList.Count; i++)
+                treeView1.Nodes.Add("custom_item_" + i);
+            for (int i = 0; i < fList.Count; i++)
+                for (int j = 0; j < fList[i].Count; j++)
+                    treeView1.Nodes[i].Nodes.Add(fList[i][j]);
+            System.Console.WriteLine("\nSize of list is : " + fList.Count);
         }
         //CIS_MS_Windows_10_Enterprise_Next_Generation_Windows_Security_v1.6.1.audit
         private void button1_Click(object sender, EventArgs e)
@@ -127,22 +128,45 @@ namespace CS_App
         List<string> fText = null;
         private void button2_Click(object sender, EventArgs e)
         {
+            List<List<string>> tmp = null;
             var filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SBT");
             System.IO.Directory.CreateDirectory(filePath);
             filePath = Path.Combine(filePath, textBox1.Text);
-
-            System.IO.File.WriteAllLines(filePath, fText);
-
-            treeView1.Nodes.Clear();
-            XmlDocument doc = new XmlDocument();
-            doc.Load(filePath);
-            treeView1.Nodes.Add(new TreeNode(doc.DocumentElement.Name));
-            TreeNode tr = new TreeNode();
-            tr = treeView1.Nodes[0];
-            AddNode(doc.DocumentElement, tr);
-            label1.Text = doc.GetElementsByTagName("check_type")[0].Attributes["type"].Value;
-            label2.Text = doc.GetElementsByTagName("group_policy")[0].Attributes["group"].Value;
+            /*
+            FileStream fs = System.IO.File.OpenWrite(filePath);
+            for (int i = 0; i < fList.Count; i++)
+                for (int j = 0; j < fList[i].Count; j++)
+                    fs.Write(fList[i][j]);*/
+            Stream file = File.Open(filePath, FileMode.Open);
+            BinaryFormatter bf = new BinaryFormatter();
+            object obj = bf.Deserialize(file);
+            TreeNode[] nodeList = (obj as IEnumerable<TreeNode>).ToArray();
+            treeView1.Nodes.AddRange(nodeList);
+            file.Close();
+            //System.IO.File.WriteAllLines(filePath, treeView1.Nodes.Cast<TreeNode>().ToArray());
+            // LoadTree(treeView1, filePath);
             button3.Visible = true;
+        }
+
+        public static void SaveTree(TreeView tree, string filename)
+        {
+            using (Stream file = File.Open(filename, FileMode.Create))
+            {
+                BinaryFormatter bf = new BinaryFormatter();
+                bf.Serialize(file, tree.Nodes.Cast<TreeNode>().ToList());
+            }
+        }
+
+        public static void LoadTree(TreeView tree, string filename)
+        {
+            using (Stream file = File.Open(filename, FileMode.Open))
+            {
+                BinaryFormatter bf = new BinaryFormatter();
+                object obj = bf.Deserialize(file);
+
+                TreeNode[] nodeList = (obj as IEnumerable<TreeNode>).ToArray();
+                tree.Nodes.AddRange(nodeList);
+            }
         }
 
         private void button3_Click(object sender, EventArgs e)
