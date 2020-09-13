@@ -28,256 +28,77 @@ namespace CS_App
 
         }
 
+        private Tuple<string, string> splitLine(string line)
+        {
+            string[] words = line.Split(':');
+            string tmp = null;
+            for (int i = 1; i < words.Length; i++)
+            {
+                if (i == words.Length - 1)
+                {
+                    tmp += words[i];
+                    break;
+                }
+                tmp += words[i] + ":";
+            }
+            return new Tuple<string, string>(words[0], tmp);
+        }
+
+        private void parseFile(string filePath)
+        {
+            string line;
+            string parsedText = null;
+            bool flg = true;
+            List<string> onelist = new List<string>();
+            List<List<string>> fList = new List<List<string>>();
+            System.IO.StreamReader file = new System.IO.StreamReader(filePath);
+            Regex r0 = new Regex("\\s*\\<\\/\\b(report)\\b", RegexOptions.Compiled);
+            Regex r1 = new Regex("\\s*\\<\\/\\b(then)\\b", RegexOptions.Compiled);
+            Regex r2 = new Regex("^\\s+\\w+\\s*\\:", RegexOptions.Compiled);
+            Regex r3 = new Regex("\\s*\\<\\/\\b(custom_item)\\b", RegexOptions.Compiled);
+            while ((line = file.ReadLine()) != null )
+            {
+                if (r0.IsMatch(line)) { flg = !flg; continue; }
+                if (line.StartsWith("#") || line == "" || flg) continue;
+                if (r1.IsMatch(line)) break;
+                if (r2.IsMatch(line) && parsedText !=null)
+                {
+                    onelist.Add(parsedText);
+                    parsedText = line;
+                    continue;
+                }
+                if (r3.IsMatch(line))
+                {
+                    onelist.Add(parsedText);
+                    fList.Add(onelist);
+                    parsedText = null;
+                    onelist = new List<string>();
+                    continue;
+                }
+                parsedText += line + '\n';
+            }
+            file.Close();
+            foreach (List<string> l in fList)
+                l.RemoveAt(0);
+            TreeView tr = new TreeView();
+            tr.Nodes.Add(new System.Windows.Forms.TreeNode().Text = "some");
+            tr.Nodes.Add(new System.Windows.Forms.TreeNode().Text = "anotherthing");
+            foreach (List<string> ls in fList)
+                listBox1.Items.Add(tr);
+                System.Console.WriteLine("\nSize of list is : " + fList[1][1]);
+        }
+        //CIS_MS_Windows_10_Enterprise_Next_Generation_Windows_Security_v1.6.1.audit
         private void button1_Click(object sender, EventArgs e)
         {
             var file = new OpenFileDialog();
             file.Filter = "Audit files (*.audit)|*.audit";
             if(file.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                var fileStream = file.OpenFile();
-                textBox1.Text = file.SafeFileName;
-                using(StreamReader reader = new StreamReader(fileStream))
-                {
-                    fileContent = reader.ReadToEnd();
-                }
-            }
-
-            Parser();
-        }
-
-        private bool isComment(string line)
-        {
-            return line.StartsWith("#");
-        }
-
-        private bool removeAnd(string line)
-        {
-            return line.Contains("&");
-        }
-
-        private string replaceFirst(string line, string text, string replace)
-        {
-            int index = line.IndexOf(text);
-            if(index < 0)
-            {
-                return line;
-            }
-
-            return line.Substring(0, index) + replace + line.Substring(index, text.Length);
-        }
-
-
-        private void custom_item(ref List<string> lines, ref int i)
-        {
-            int k = i;
-            int j, m;
-
-            for (j = i; j < lines.Count; j++)
-            {
-                if (!lines[j].Contains("</custom_item"))
-                {
-                    continue;
-                }
-                else
-                {
-                    i = j - 1;
-                    break;
-                }
-            }
-
-            for(m = k + 1; m < j; m++)
-            {
-                if(lines[m].Contains("check_type"))
-                {
-                    lines[m] = lines[m].Replace("check_type", "<check_type>");
-                    lines[m] = lines[m].Replace(":", "");
-                    lines[m] = lines[m].Insert(lines[m].Length - 2, "</check_type>");
-                    continue;
-                }
-                else if(lines[m].Contains("value_type"))
-                {
-                    lines[m] = lines[m].Replace("value_type", "<value_type>");
-                    lines[m] = lines[m].Replace(":", "");
-                    lines[m] = lines[m].Insert(lines[m].Length - 2, "</value_type>");
-                    continue;
-                }
-                else if(lines[m].Contains("value_data"))
-                {
-                    lines[m] = lines[m].Replace("value_data", "<value_data>");
-                    lines[m] = lines[m].Replace(":", "");
-                    lines[m] = lines[m].Replace('"', ' ');
-                    lines[m] = lines[m].Insert(lines[m].Length - 2, "</value_data>");
-                    continue;
-                }
-                else if(lines[m].Contains("  description"))
-                {
-                    lines[m] = lines[m].Replace("description", "<description>");
-                    lines[m] = lines[m].Replace(":", "");
-                    lines[m] = lines[m].Replace('"', ' ');
-                    lines[m] = lines[m].Insert(lines[m].Length - 2, "</description>");
-                    continue;
-                }
-                else if(lines[m].Contains("reg_key"))
-                {
-                    lines[m] = lines[m].Replace("reg_key", "<reg_key>");
-                    lines[m] = lines[m].Replace(":", "");
-                    lines[m] = lines[m].Replace('"', ' ');
-                    lines[m] = lines[m].Insert(lines[m].Length - 2, "</reg_key>");
-                    continue;
-                }
-                else if(lines[m].Contains("reg_item"))
-                {
-                    lines[m] = lines[m].Replace("reg_item", "<reg_item>");
-                    lines[m] = lines[m].Replace(":", "");
-                    lines[m] = lines[m].Replace('"', ' ');
-                    lines[m] = lines[m].Insert(lines[m].Length - 2, "</reg_item>");
-                    continue;
-                }
-                else if(lines[m].Contains("  type"))
-                {
-                    lines[m] = lines[m].Replace("type", "<type>");
-                    lines[m] = lines[m].Replace(":", "");
-                    lines[m] = lines[m].Insert(lines[m].Length - 2, "</type>");
-                    continue;
-                }
-                else if (lines[m].Contains("  reference"))
-                {
-                    lines[m] = lines[m].Replace("reference", "<reference>");
-                    lines[m] = lines[m].Replace(":", "");
-                    lines[m] = lines[m].Replace('"', ' ');
-                    lines[m] = lines[m].Insert(lines[m].Length - 2, "</reference>");
-                    continue;
-                }
-                else if (lines[m].Contains("reg_option"))
-                {
-                    lines[m] = lines[m].Replace("reg_option", "<reg_option>");
-                    lines[m] = lines[m].Replace(":", "");
-                    lines[m] = lines[m].Insert(lines[m].Length - 2, "</reg_option>");
-                    continue;
-                }
-                else if (lines[m].Contains("see_also"))
-                {
-                    lines[m] = lines[m].Replace("see_also", "<see_also>");
-                    lines[m] = lines[m].Replace(":", "");
-                    lines[m] = lines[m].Replace('"', ' ');
-                    lines[m] = lines[m].Insert(lines[m].Length - 2, "</see_also>");
-                    continue;
-                }
-                else if(lines[m].Contains("  solution"))
-                {
-                    lines[m] = lines[m].Replace("solution", "<solution>");
-                    lines[m] = lines[m].Replace(":", "");
-                    lines[m] = lines[m].Replace('"', ' ');
-                    m++;
-                    while(char.IsLetterOrDigit(lines[m][0]))
-                    {
-                        m++;
-                    }
-                    lines[m - 1] = lines[m - 1].Replace('"', ' ');
-                    lines[m - 1] = lines[m - 1].Insert(lines[m - 1].Length - 2, "</solution>");
-                    m--;
-                    continue;
-                }
-                else if(lines[m].Contains("   info"))
-                {
-                    lines[m] = replaceFirst(lines[m], "info", "<info>");
-                    lines[m] = lines[m].Replace(":", "");
-                    lines[m] = lines[m].Replace('"', ' ');
-                    m++;
-                    while(char.IsLetterOrDigit(lines[m][0]))
-                    {
-                        m++;
-                    }
-                    lines[m - 1] = lines[m - 1].Replace('"', ' ');
-                    lines[m - 1] = lines[m - 1].Insert(lines[m - 1].Length - 2, "</info>");
-                    m--;
-                    continue;
-                }
+                parseFile(file.FileName);
             }
         }
 
-        private void report(ref List<string> lines, ref int i)
-        {
-            int k = i;
-            int j, m;
-
-            for(j = i; j < lines.Count; j++)
-            {
-                if(!lines[j].Contains("</report"))
-                {
-                    continue;
-                }
-                else
-                {
-                    i = j - 1;
-                    break;
-                }
-            }
-
-            for(m = k + 1; m < j; m++)
-            {
-                if(lines[m].Contains("  description"))
-                {
-                    lines[m] = lines[m].Replace("description", "<description>");
-                    lines[m] = lines[m].Replace(":", "");
-                    lines[m] = lines[m].Replace('"', ' ');
-                    lines[m] = lines[m].Insert(lines[m].Length - 2, "</description>");
-                    continue;
-                }
-                else if(lines[m].Contains("   info"))
-                {
-                    lines[m] = lines[m].Replace("info", "<info>");
-                    lines[m] = lines[m].Replace(":", "");
-                    lines[m] = lines[m].Replace('"', ' ');
-                    lines[m] = lines[m].Insert(lines[m].Length - 2, "</info>");
-                }
-                else if (lines[m].Contains("see_also"))
-                {
-                    lines[m] = lines[m].Replace("see_also", "<see_also>");
-                    lines[m] = lines[m].Replace(":", "");
-                    lines[m] = lines[m].Replace('"', ' ');
-                    lines[m] = lines[m].Insert(lines[m].Length - 2, "</see_also>");
-                    continue;
-                }
-            }
-        }
-        private void Parser()
-        {
-            string[] tmp = fileContent.Split(new[] { "\r\n", "\r", "\n"}, StringSplitOptions.RemoveEmptyEntries);
-            var lines = new List<string>(tmp);
-            lines.RemoveAll(isComment);
-            lines.RemoveAll(removeAnd);
-
-            for(int i = 0; i < lines.Count; i++)
-            {
-                lines[i] += "\r\n";
-            }
-
-            for(int i = 0; i < lines.Count; i++)
-            {
-                if(lines[i].Contains(":") && lines[i].Contains("<"))
-                {
-                    lines[i] = lines[i].Replace(":", "=");
-                }
-                else if(lines[i].Contains("<custom_item"))
-                {
-                    custom_item(ref lines, ref i);
-                }
-                
-                if(lines[i].Contains("<report"))
-                {
-                    report(ref lines, ref i);
-                }
-            }
-
-            int index = lines[0].IndexOf("version");
-            lines[0] = lines[0].Remove(22, (lines[0].Length - 3 - index)).Insert(11, " type");
-
-            lines[1] = lines[1].Insert(13, " group");
-            textBox1.Text = textBox1.Text.Remove(textBox1.Text.Length - 5, 5);
-            textBox1.Text += ".xml";           
-            fText = lines;
-        }
+        
 
         private void AddNode(XmlNode inXmlNode, TreeNode inTreeNode)
         {
