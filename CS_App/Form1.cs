@@ -40,9 +40,25 @@ namespace CS_App
                 {
                     fileContent = reader.ReadToEnd();
                 }
+            Parser();
+                var filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SBT");
+                System.IO.Directory.CreateDirectory(filePath);
+                filePath = Path.Combine(filePath, textBox1.Text);
+
+                System.IO.File.WriteAllLines(filePath, fText);
+
+                treeView1.Nodes.Clear();
+                XmlDocument doc = new XmlDocument();
+                doc.Load(filePath);
+                treeView1.Nodes.Add(new TreeNode(doc.DocumentElement.Name));
+                TreeNode tr = new TreeNode();
+                tr = treeView1.Nodes[0];
+                AddNode(doc.DocumentElement, tr);
+                label1.Text = doc.GetElementsByTagName("check_type")[0].Attributes["type"].Value;
+                label2.Text = doc.GetElementsByTagName("group_policy")[0].Attributes["group"].Value;
+                button3.Visible = true;
             }
 
-            Parser();
         }
 
         private bool isComment(string line)
@@ -312,7 +328,7 @@ namespace CS_App
 
             System.IO.File.WriteAllLines(filePath, fText);
 
-            treeView1.Nodes.Clear();
+            /*treeView1.Nodes.Clear();
             XmlDocument doc = new XmlDocument();
             doc.Load(filePath);
             treeView1.Nodes.Add(new TreeNode(doc.DocumentElement.Name));
@@ -321,7 +337,7 @@ namespace CS_App
             AddNode(doc.DocumentElement, tr);
             label1.Text = doc.GetElementsByTagName("check_type")[0].Attributes["type"].Value;
             label2.Text = doc.GetElementsByTagName("group_policy")[0].Attributes["group"].Value;
-            button3.Visible = true;
+            button3.Visible = true;*/
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -354,5 +370,62 @@ namespace CS_App
                 PrintRecursive(n, fg);
             }
         }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            string input = Microsoft.VisualBasic.Interaction.InputBox("Insert desired word", "Search");
+
+            if (input.Length == 0)
+                button2_Click(sender, e);
+
+            var filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SBT");
+            System.IO.Directory.CreateDirectory(filePath);
+            filePath = Path.Combine(filePath, textBox1.Text);
+            System.IO.File.WriteAllLines(filePath, fText);
+
+            XmlDocument doc = new XmlDocument();
+            doc.Load(filePath);
+            XmlNodeList nodelist;
+            XmlNode root = doc.DocumentElement;
+            string desiredNodes = "//custom_item[contains(description, '" + input + "')]";
+            nodelist = root.SelectNodes(desiredNodes);
+
+            if (nodelist.Count == 0)
+            {
+                MessageBox.Show("Policies with such description do not exist in current file");
+                button2_Click(sender, e);
+            }
+
+            treeView1.Nodes.Clear();
+            TreeNode treenode;
+            treenode = treeView1.Nodes.Add("Search results");
+
+            foreach (XmlNode xn in nodelist)
+            {
+                string text = xn.Name;
+                string text1 = xn.Value;
+
+                treenode = treeView1.Nodes.Add(text1, text);
+
+                addChildNodes(xn, treenode);
+            }
+        }
+            private void addChildNodes(XmlNode oldXn, TreeNode OldTreenode)
+            {
+                TreeNode treeNode = null;
+                XmlNodeList nodeList = oldXn.ChildNodes;
+                string text = null;
+
+                foreach (XmlNode xn in nodeList)
+                {
+                    if (xn.HasChildNodes)
+                        text = xn.Name;
+                    else
+                        text = xn.Value;
+                    string text1 = xn.Value;
+                    treeNode = OldTreenode.Nodes.Add(text1, text);
+                    addChildNodes(xn, treeNode);
+                }
+            }
+        }
     }
-}
