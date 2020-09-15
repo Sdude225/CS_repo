@@ -17,7 +17,8 @@ namespace CS_App
     public partial class Form1 : Form
     {
         public String fileContent = String.Empty;
-            
+        public String globalFilePath = String.Empty;
+
         public Form1()
         {
             InitializeComponent();
@@ -32,19 +33,30 @@ namespace CS_App
         {
             var file = new OpenFileDialog();
             file.Filter = "Audit files (*.audit)|*.audit";
-            if(file.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            if (file.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 var fileStream = file.OpenFile();
                 textBox1.Text = file.SafeFileName;
-                using(StreamReader reader = new StreamReader(fileStream))
+                using (StreamReader reader = new StreamReader(fileStream))
                 {
                     fileContent = reader.ReadToEnd();
                 }
-                Parser();
+
+
+                if (fileContent[0] == '#')
+                {
+                    Parser();
+                }
+                else
+                {
+                    string[] tmp = fileContent.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
+                    fText = new List<string>(tmp);
+                }
 
                 var filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SBT");
                 System.IO.Directory.CreateDirectory(filePath);
                 filePath = Path.Combine(filePath, textBox1.Text);
+                globalFilePath = filePath;
 
                 System.IO.File.WriteAllLines(filePath, fText);
 
@@ -55,8 +67,12 @@ namespace CS_App
                 TreeNode tr = new TreeNode();
                 tr = treeView1.Nodes[0];
                 AddNode(doc.DocumentElement, tr);
-                label1.Text = doc.GetElementsByTagName("check_type")[0].Attributes["type"].Value;
-                label2.Text = doc.GetElementsByTagName("group_policy")[0].Attributes["group"].Value;
+                if(doc.GetElementsByTagName("check_type")[0].Attributes["type"] != null)
+                {
+                    label1.Text = doc.GetElementsByTagName("check_type")[0].Attributes["type"].Value;
+                    label2.Text = doc.GetElementsByTagName("group_policy")[0].Attributes["group"].Value;
+                }
+                
                 button3.Visible = true;
                 button4.Visible = true;
             }
@@ -76,7 +92,7 @@ namespace CS_App
         private string replaceFirst(string line, string text, string replace)
         {
             int index = line.IndexOf(text);
-            if(index < 0)
+            if (index < 0)
             {
                 return line;
             }
@@ -103,23 +119,23 @@ namespace CS_App
                 }
             }
 
-            for(m = k + 1; m < j; m++)
+            for (m = k + 1; m < j; m++)
             {
-                if(lines[m].Contains("check_type"))
+                if (lines[m].Contains("check_type"))
                 {
                     lines[m] = lines[m].Replace("check_type", "<check_type>");
                     lines[m] = lines[m].Replace(":", "");
                     lines[m] = lines[m].Insert(lines[m].Length - 2, "</check_type>");
                     continue;
                 }
-                else if(lines[m].Contains("value_type"))
+                else if (lines[m].Contains("value_type"))
                 {
                     lines[m] = lines[m].Replace("value_type", "<value_type>");
                     lines[m] = lines[m].Replace(":", "");
                     lines[m] = lines[m].Insert(lines[m].Length - 2, "</value_type>");
                     continue;
                 }
-                else if(lines[m].Contains("value_data"))
+                else if (lines[m].Contains("value_data"))
                 {
                     lines[m] = lines[m].Replace("value_data", "<value_data>");
                     lines[m] = lines[m].Replace(":", "");
@@ -127,7 +143,7 @@ namespace CS_App
                     lines[m] = lines[m].Insert(lines[m].Length - 2, "</value_data>");
                     continue;
                 }
-                else if(lines[m].Contains("  description"))
+                else if (lines[m].Contains("  description"))
                 {
                     lines[m] = lines[m].Replace("description", "<description>");
                     lines[m] = lines[m].Replace(":", "");
@@ -135,7 +151,7 @@ namespace CS_App
                     lines[m] = lines[m].Insert(lines[m].Length - 2, "</description>");
                     continue;
                 }
-                else if(lines[m].Contains("reg_key"))
+                else if (lines[m].Contains("reg_key"))
                 {
                     lines[m] = lines[m].Replace("reg_key", "<reg_key>");
                     lines[m] = lines[m].Replace(":", "");
@@ -143,7 +159,7 @@ namespace CS_App
                     lines[m] = lines[m].Insert(lines[m].Length - 2, "</reg_key>");
                     continue;
                 }
-                else if(lines[m].Contains("reg_item"))
+                else if (lines[m].Contains("reg_item"))
                 {
                     lines[m] = lines[m].Replace("reg_item", "<reg_item>");
                     lines[m] = lines[m].Replace(":", "");
@@ -151,7 +167,7 @@ namespace CS_App
                     lines[m] = lines[m].Insert(lines[m].Length - 2, "</reg_item>");
                     continue;
                 }
-                else if(lines[m].Contains("  type"))
+                else if (lines[m].Contains("  type"))
                 {
                     lines[m] = lines[m].Replace("type", "<type>");
                     lines[m] = lines[m].Replace(":", "");
@@ -181,13 +197,13 @@ namespace CS_App
                     lines[m] = lines[m].Insert(lines[m].Length - 2, "</see_also>");
                     continue;
                 }
-                else if(lines[m].Contains("  solution"))
+                else if (lines[m].Contains("  solution"))
                 {
                     lines[m] = lines[m].Replace("solution", "<solution>");
                     lines[m] = lines[m].Replace(":", "");
                     lines[m] = lines[m].Replace('"', ' ');
                     m++;
-                    while(char.IsLetterOrDigit(lines[m][0]))
+                    while (char.IsLetterOrDigit(lines[m][0]))
                     {
                         m++;
                     }
@@ -196,13 +212,13 @@ namespace CS_App
                     m--;
                     continue;
                 }
-                else if(lines[m].Contains("   info"))
+                else if (lines[m].Contains("   info"))
                 {
                     lines[m] = replaceFirst(lines[m], "info", "<info>");
                     lines[m] = lines[m].Replace(":", "");
                     lines[m] = lines[m].Replace('"', ' ');
                     m++;
-                    while(char.IsLetterOrDigit(lines[m][0]))
+                    while (char.IsLetterOrDigit(lines[m][0]))
                     {
                         m++;
                     }
@@ -214,23 +230,27 @@ namespace CS_App
             }
         }
 
-        
+
         private void Parser()
         {
-            string[] tmp = fileContent.Split(new[] { "\r\n", "\r", "\n"}, StringSplitOptions.RemoveEmptyEntries);
+            string[] tmp = fileContent.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
             var lines = new List<string>(tmp);
             lines.RemoveAll(isComment);
             lines.RemoveAll(removeAnd);
 
-            for(int i = 0; i < lines.Count; i++)
+            for (int i = 0; i < lines.Count; i++)
             {
                 lines[i] += "\r\n";
             }
 
-            for(int i = 2; i < lines.Count - 2; i++)
+            int k = 0;
+            for (int i = 2; i < lines.Count - 2; i++)
             {
                 if (lines[i].Contains("<custom_item"))
                 {
+                    string ciId = "<custom_item id=" + '"' + k.ToString() + '"' + ">";
+                    k++;
+                    lines[i] = lines[i].Replace("<custom_item>", ciId);
                     i++;
                     while (!lines[i].Contains("</custom_item>"))
                         i++;
@@ -261,7 +281,7 @@ namespace CS_App
 
             lines[1] = lines[1].Insert(13, " group");
             textBox1.Text = textBox1.Text.Remove(textBox1.Text.Length - 5, 5);
-            textBox1.Text += ".xml";           
+            textBox1.Text += ".audit";
             fText = lines;
         }
 
@@ -292,7 +312,37 @@ namespace CS_App
         List<string> fText = null;
         private void button2_Click(object sender, EventArgs e)
         {
-            
+            List<int> index = new List<int>();
+            getCheckedNodes(treeView1.Nodes[0].Nodes[0].Nodes, ref index);
+
+            XmlDocument doc = new XmlDocument();
+            doc.Load(globalFilePath);
+            XmlNode root = doc.DocumentElement;
+            List<XmlNode> nodeList = new List<XmlNode>();
+
+            foreach (int i in index)
+            {
+                string xpath = "/check_type/group_policy/custom_item[@id=\'" + i + "\']";
+                XmlNode node = root.SelectSingleNode(xpath);
+                nodeList.Add(node);
+            }
+
+            XmlDocument newDoc = new XmlDocument();
+            newDoc.LoadXml("<root> </root>");
+
+            foreach(XmlNode xn in nodeList)
+            {
+                XmlNode importNode = newDoc.ImportNode(xn, true);
+                newDoc.DocumentElement.AppendChild(importNode);
+            }
+
+            var filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SBT");
+            System.IO.Directory.CreateDirectory(filePath);
+            filePath = Path.Combine(filePath, textBox1.Text);
+
+            newDoc.Save(filePath);
+
+
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -301,7 +351,8 @@ namespace CS_App
             {
                 CallRecursive(treeView1, true);
                 button3.Text = "Deselect All";
-            }else
+            }
+            else
             {
                 CallRecursive(treeView1, false);
                 button3.Text = "Select All";
@@ -316,7 +367,7 @@ namespace CS_App
                 PrintRecursive(tn, fg);
             }
         }
-  
+
         private void CallRecursive(TreeView treeView, bool fg)
         {
             TreeNodeCollection nodes = treeView.Nodes;
@@ -365,22 +416,39 @@ namespace CS_App
                 addChildNodes(xn, treenode);
             }
         }
-            private void addChildNodes(XmlNode oldXn, TreeNode OldTreenode)
-            {
-                TreeNode treeNode = null;
-                XmlNodeList nodeList = oldXn.ChildNodes;
-                string text = null;
+        private void addChildNodes(XmlNode oldXn, TreeNode OldTreenode)
+        {
+            TreeNode treeNode = null;
+            XmlNodeList nodeList = oldXn.ChildNodes;
+            string text = null;
 
-                foreach (XmlNode xn in nodeList)
-                {
-                    if (xn.HasChildNodes)
-                        text = xn.Name;
-                    else
-                        text = xn.Value;
-                    string text1 = xn.Value;
-                    treeNode = OldTreenode.Nodes.Add(text1, text);
-                    addChildNodes(xn, treeNode);
-                }
+            foreach (XmlNode xn in nodeList)
+            {
+                if (xn.HasChildNodes)
+                    text = xn.Name;
+                else
+                    text = xn.Value;
+                string text1 = xn.Value;
+                treeNode = OldTreenode.Nodes.Add(text1, text);
+                addChildNodes(xn, treeNode);
             }
         }
+
+        private void getCheckedNodes(TreeNodeCollection nodes, ref List<int> index)
+        {
+            foreach(TreeNode node in nodes)
+            {
+                if (!node.Checked)
+                    continue;
+
+                index.Add(node.Index);
+
+                if (node.Nodes.Count != 0)
+                    getCheckedNodes(node.Nodes, ref index);
+            }
+        }
+
+        
+    }
+
     }
