@@ -16,3 +16,10 @@ In the end we can choose how the new file will be named, and it is saved in AppD
 Video demonstration of inplemented features: https://youtu.be/rJhRBEcN6Vw
 
 Main implementation code can be found in Form1.cs
+
+# Lab2
+
+Pavov Alexandru, FAF-181
+Lab work was done in two, with Dodi Cristian-Dumitru
+
+
