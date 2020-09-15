@@ -40,7 +40,8 @@ namespace CS_App
                 {
                     fileContent = reader.ReadToEnd();
                 }
-            Parser();
+                Parser();
+
                 var filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SBT");
                 System.IO.Directory.CreateDirectory(filePath);
                 filePath = Path.Combine(filePath, textBox1.Text);
@@ -57,6 +58,7 @@ namespace CS_App
                 label1.Text = doc.GetElementsByTagName("check_type")[0].Attributes["type"].Value;
                 label2.Text = doc.GetElementsByTagName("group_policy")[0].Attributes["group"].Value;
                 button3.Visible = true;
+                button4.Visible = true;
             }
 
         }
@@ -212,51 +214,7 @@ namespace CS_App
             }
         }
 
-        private void report(ref List<string> lines, ref int i)
-        {
-            int k = i;
-            int j, m;
-
-            for(j = i; j < lines.Count; j++)
-            {
-                if(!lines[j].Contains("</report"))
-                {
-                    continue;
-                }
-                else
-                {
-                    i = j - 1;
-                    break;
-                }
-            }
-
-            for(m = k + 1; m < j; m++)
-            {
-                if(lines[m].Contains("  description"))
-                {
-                    lines[m] = lines[m].Replace("description", "<description>");
-                    lines[m] = lines[m].Replace(":", "");
-                    lines[m] = lines[m].Replace('"', ' ');
-                    lines[m] = lines[m].Insert(lines[m].Length - 2, "</description>");
-                    continue;
-                }
-                else if(lines[m].Contains("   info"))
-                {
-                    lines[m] = lines[m].Replace("info", "<info>");
-                    lines[m] = lines[m].Replace(":", "");
-                    lines[m] = lines[m].Replace('"', ' ');
-                    lines[m] = lines[m].Insert(lines[m].Length - 2, "</info>");
-                }
-                else if (lines[m].Contains("see_also"))
-                {
-                    lines[m] = lines[m].Replace("see_also", "<see_also>");
-                    lines[m] = lines[m].Replace(":", "");
-                    lines[m] = lines[m].Replace('"', ' ');
-                    lines[m] = lines[m].Insert(lines[m].Length - 2, "</see_also>");
-                    continue;
-                }
-            }
-        }
+        
         private void Parser()
         {
             string[] tmp = fileContent.Split(new[] { "\r\n", "\r", "\n"}, StringSplitOptions.RemoveEmptyEntries);
@@ -269,20 +227,32 @@ namespace CS_App
                 lines[i] += "\r\n";
             }
 
-            for(int i = 0; i < lines.Count; i++)
+            for(int i = 2; i < lines.Count - 2; i++)
             {
-                if(lines[i].Contains(":") && lines[i].Contains("<"))
+                if (lines[i].Contains("<custom_item"))
+                {
+                    i++;
+                    while (!lines[i].Contains("</custom_item>"))
+                        i++;
+                    continue;
+                }
+                else
+                {
+                    lines.RemoveAt(i);
+                    i--;
+                }
+
+            }
+
+            for (int i = 0; i < lines.Count; i++)
+            {
+                if (lines[i].Contains(":") && lines[i].Contains("<"))
                 {
                     lines[i] = lines[i].Replace(":", "=");
                 }
-                else if(lines[i].Contains("<custom_item"))
+                else if (lines[i].Contains("<custom_item"))
                 {
                     custom_item(ref lines, ref i);
-                }
-                
-                if(lines[i].Contains("<report"))
-                {
-                    report(ref lines, ref i);
                 }
             }
 
@@ -322,22 +292,7 @@ namespace CS_App
         List<string> fText = null;
         private void button2_Click(object sender, EventArgs e)
         {
-            var filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SBT");
-            System.IO.Directory.CreateDirectory(filePath);
-            filePath = Path.Combine(filePath, textBox1.Text);
-
-            System.IO.File.WriteAllLines(filePath, fText);
-
-            /*treeView1.Nodes.Clear();
-            XmlDocument doc = new XmlDocument();
-            doc.Load(filePath);
-            treeView1.Nodes.Add(new TreeNode(doc.DocumentElement.Name));
-            TreeNode tr = new TreeNode();
-            tr = treeView1.Nodes[0];
-            AddNode(doc.DocumentElement, tr);
-            label1.Text = doc.GetElementsByTagName("check_type")[0].Attributes["type"].Value;
-            label2.Text = doc.GetElementsByTagName("group_policy")[0].Attributes["group"].Value;
-            button3.Visible = true;*/
+            
         }
 
         private void button3_Click(object sender, EventArgs e)
