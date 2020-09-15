@@ -18,6 +18,8 @@ namespace CS_App
     public partial class Form1 : Form
     {
         public String fileContent = String.Empty;
+
+        enum keywords { custom_item, type, description, value_data, value_type };
             
         public Form1()
         {
@@ -57,11 +59,12 @@ namespace CS_App
             Regex r1 = new Regex("\\s*\\<\\/\\b(then)\\b", RegexOptions.Compiled);
             Regex r2 = new Regex("^\\s+\\w+\\s*\\:", RegexOptions.Compiled);
             Regex r3 = new Regex("\\s*\\<\\/\\b(custom_item)\\b", RegexOptions.Compiled);
+            Item tempItem;
             while ((line = file.ReadLine()) != null )
             {
-                if (r0.IsMatch(line)) { flg = !flg; continue; }
+                //if (r0.IsMatch(line)) { flg = !flg; continue; }
                 if (line.StartsWith("#") || line == "" || flg) continue;
-                if (r1.IsMatch(line)) break;
+                /*if (r1.IsMatch(line)) break;
                 if (r2.IsMatch(line) && parsedText !=null)
                 {
                     onelist.Add(parsedText);
@@ -75,8 +78,9 @@ namespace CS_App
                     parsedText = null;
                     onelist = new List<string>();
                     continue;
-                }
+                }*/
                 parsedText += line + '\n';
+                if ()
             }
             file.Close();
             foreach (List<string> l in fList)
