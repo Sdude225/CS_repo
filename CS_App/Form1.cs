@@ -11,13 +11,14 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
 using System.Xml;
 
 namespace CS_App
 {
     public partial class Form1 : Form
     {
-        public String fileContent = String.Empty;
+        public List<List<string>> fileContent = null;
             
         public Form1()
         {
@@ -33,38 +34,114 @@ namespace CS_App
         //CIS_MS_Windows_10_Enterprise_Next_Generation_Windows_Security_v1.6.1.audit
         private void button1_Click(object sender, EventArgs e)
         {
+            checkedListBox1.Items.Clear();
+
             var file = new OpenFileDialog();
             file.Filter = "Audit files (*.audit)|*.audit";
             if(file.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 Parser parser = new Parser(file.FileName);
-                foreach (List<string> s in parser.getParsedText())
-                    foreach (string str in s)
-                        if (str.Trim().StartsWith("description"))
-                            checkedListBox1.Items.Add(str.Replace("description", ""));
+                System.IO.StreamReader tmp = new System.IO.StreamReader(file.FileName);
+
+                if (tmp.ReadLine()[0] == '#')
+                {
+                    foreach (List<string> s in parser.getParsedText())
+                        foreach (string str in s)
+                            if (str.Trim().StartsWith("description"))
+                                checkedListBox1.Items.Add(str.Replace("description", ""));
+
+                    fileContent = parser.getParsedText();
+                }
+                else
+                {
+                    foreach (List<string> s in parser.getData(tmp))
+                        foreach (string str in s)
+                            if (str.Trim().StartsWith("description"))
+                                checkedListBox1.Items.Add(str.Replace("description", ""));
+
+                    fileContent = parser.getData(tmp);
+                }
             }
+
+
+            textBox1.Text = Path.GetFileName(file.FileName);
+            
+            button3.Visible = true;
+            button4.Visible = true;
         }
 
-        
 
 
         private void button2_Click(object sender, EventArgs e)
         {
+            var filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SBT");
+            System.IO.Directory.CreateDirectory(filePath);
+            filePath = Path.Combine(filePath, textBox1.Text);
+
+            System.IO.File.WriteAllText(filePath, "");
             
+
+            foreach (int index in checkedListBox1.CheckedIndices)
+            {
+                System.IO.File.AppendAllLines(filePath, fileContent[index]);
+            }
+            
+        }
+
+        private void CallRecursive(bool value)
+        {
+            for(int i = 0; i < checkedListBox1.Items.Count; i++)
+            {
+                checkedListBox1.SetItemChecked(i, value);
+            }
         }
 
 
         private void button3_Click(object sender, EventArgs e)
         {
-/*            if (button3.Text == "Select All")
+            if(button3.Text == "Select All")
             {
-                CallRecursive(treeView1, true);
+                CallRecursive(true);
                 button3.Text = "Deselect All";
-            }else
+            }
+            else
             {
-                CallRecursive(treeView1, false);
+                CallRecursive(false);
                 button3.Text = "Select All";
-            }*/
+            }
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            string input = Microsoft.VisualBasic.Interaction.InputBox("Insert desired word", "Search");
+
+            if (input.Length == 0)
+            {
+                checkedListBox1.Items.Clear();
+                foreach (List<string> s in fileContent)
+                    foreach (string line in s)
+                        if (line.Trim().StartsWith("description"))
+                            checkedListBox1.Items.Add(line.Replace("description", ""));
+            }
+
+            List<string> searchedItems = new List<string>();
+
+            foreach(string item in checkedListBox1.Items)
+            {
+                if (item.IndexOf(input, StringComparison.OrdinalIgnoreCase) >= 0)
+                    searchedItems.Add(item);
+            }
+
+            if(searchedItems.Count == 0)
+            {
+                MessageBox.Show("Search querry yeilded no result, try again");
+                button4_Click(sender, e);
+            }
+
+            checkedListBox1.Items.Clear();
+
+            foreach (string s in searchedItems)
+                checkedListBox1.Items.Add(s);
         }
     }
 }
