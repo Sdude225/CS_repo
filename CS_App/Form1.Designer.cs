@@ -36,6 +36,7 @@
             this.button3 = new System.Windows.Forms.Button();
             this.checkedListBox1 = new System.Windows.Forms.CheckedListBox();
             this.button4 = new System.Windows.Forms.Button();
+            this.button5 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // button1
@@ -83,7 +84,6 @@
             this.button3.TabIndex = 10;
             this.button3.Text = "Select All";
             this.button3.UseVisualStyleBackColor = true;
-            this.button3.Visible = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // checkedListBox1
@@ -104,13 +104,23 @@
             this.button4.Text = "Search";
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.button4_Click);
-            this.button4.Visible = true;
+            // 
+            // button5
+            // 
+            this.button5.Location = new System.Drawing.Point(414, 13);
+            this.button5.Name = "button5";
+            this.button5.Size = new System.Drawing.Size(75, 23);
+            this.button5.TabIndex = 13;
+            this.button5.Text = "Scan";
+            this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.button5_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(916, 554);
+            this.Controls.Add(this.button5);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.checkedListBox1);
             this.Controls.Add(this.button3);
@@ -134,6 +144,7 @@
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.CheckedListBox checkedListBox1;
         private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.Button button5;
     }
 }
 

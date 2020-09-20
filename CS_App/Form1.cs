@@ -125,5 +125,12 @@ namespace CS_App
             foreach (string s in searchedItems)
                 checkedListBox1.Items.Add(s);
         }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            List<List<string>> selectedPolicies = new List<List<string>>();
+
+            Scanner scanner = new Scanner(selectedPolicies);
+        }
     }
 }
