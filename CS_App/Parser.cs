@@ -26,38 +26,18 @@ namespace CS_App
                 if (rgx1.IsMatch(line))
                 {
                     flg = !flg;
-                    if (stack.Count != 0)
+                    if (stack.Count > 0)
                     {
                         stack.Add(line);
                         fnList.Add(stack);
                         stack = new List<string>();
+                        continue;
                     }
+                    stack.Add(line);
                 }
-                if (flg)
-                    if (rgx0.IsMatch(line)) stack.Add(line);
+                if (flg && rgx0.IsMatch(line)) stack.Add(line);
             }
         }
         public List<List<string>> getParsedText() { return fnList; }
-
-        public List<List<string>> getData(StreamReader streamReader)
-        {
-            List<List<string>> fileContent = new List<List<string>>();
-            List<string> stack = new List<string>();
-            string line = null;
-            while((line = streamReader.ReadLine()) != null)
-            {
-                if (!line.Contains("custom_item"))
-                    stack.Add(line);
-                else
-                {
-                    stack.Add(line);
-                    fileContent.Add(stack);
-                    stack = new List<string>();
-                }
-                
-            }
-
-            return fileContent;
-        }
     }
 }

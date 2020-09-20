@@ -43,31 +43,17 @@ namespace CS_App
                 Parser parser = new Parser(file.FileName);
                 System.IO.StreamReader tmp = new System.IO.StreamReader(file.FileName);
 
-                if (tmp.ReadLine()[0] == '#')
-                {
-                    foreach (List<string> s in parser.getParsedText())
-                        foreach (string str in s)
-                            if (str.Trim().StartsWith("description"))
-                                checkedListBox1.Items.Add(str.Replace("description", ""));
-
-                    fileContent = parser.getParsedText();
-                }
-                else
-                {
-                    foreach (List<string> s in parser.getData(tmp))
-                        foreach (string str in s)
-                            if (str.Trim().StartsWith("description"))
-                                checkedListBox1.Items.Add(str.Replace("description", ""));
-
-                    fileContent = parser.getData(tmp);
-                }
+                foreach (List<string> s in parser.getParsedText())
+                    foreach (string str in s)
+                        if (str.Trim().StartsWith("description"))
+                            checkedListBox1.Items.Add(str.Replace("description", ""));
+                checkedListBox1.SetSelected(checkedListBox1.SelectedIndex, false);
+                fileContent = parser.getParsedText();
             }
 
 
             textBox1.Text = Path.GetFileName(file.FileName);
             
-            button3.Visible = true;
-            button4.Visible = true;
         }
 
 
@@ -82,18 +68,14 @@ namespace CS_App
             
 
             foreach (int index in checkedListBox1.CheckedIndices)
-            {
                 System.IO.File.AppendAllLines(filePath, fileContent[index]);
-            }
             
         }
 
         private void CallRecursive(bool value)
         {
             for(int i = 0; i < checkedListBox1.Items.Count; i++)
-            {
                 checkedListBox1.SetItemChecked(i, value);
-            }
         }
 
 

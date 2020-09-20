@@ -83,7 +83,7 @@
             this.button3.TabIndex = 10;
             this.button3.Text = "Select All";
             this.button3.UseVisualStyleBackColor = true;
-            this.button3.Visible = false;
+            this.button3.Visible = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // checkedListBox1
@@ -104,7 +104,7 @@
             this.button4.Text = "Search";
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.button4_Click);
-            this.button4.Visible = false;
+            this.button4.Visible = true;
             // 
             // Form1
             // 
