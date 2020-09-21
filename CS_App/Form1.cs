@@ -18,7 +18,7 @@ namespace CS_App
     public partial class Form1 : Form
     {
         public List<List<string>> fileContent = null;
-            
+
         public Form1() { InitializeComponent(); }
 
         private void Form1_Load(object sender, EventArgs e) { }
@@ -27,7 +27,7 @@ namespace CS_App
             listView1.Items.Clear();
             var file = new OpenFileDialog();
             file.Filter = "Audit files (*.audit)|*.audit";
-            if(file.ShowDialog() == DialogResult.OK)
+            if (file.ShowDialog() == DialogResult.OK)
             {
                 Parser parser = new Parser(file.FileName);
                 StreamReader tmp = new StreamReader(file.FileName);
@@ -37,7 +37,7 @@ namespace CS_App
                             listView1.Items.Add(str.Replace("description", ""));
                 fileContent = parser.getParsedText();
             }
-            textBox1.Text = Path.GetFileName(file.FileName);            
+            textBox1.Text = Path.GetFileName(file.FileName);
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -52,7 +52,7 @@ namespace CS_App
 
         private void button3_Click(object sender, EventArgs e)
         {
-            if(button3.Text == "Select All")
+            if (button3.Text == "Select All")
             {
                 CallRecursive(true);
                 button3.Text = "Deselect All";
@@ -72,18 +72,26 @@ namespace CS_App
         private void button4_Click(object sender, EventArgs e)
         {
             string input = Microsoft.VisualBasic.Interaction.InputBox("Insert desired word", "Search");
-            foreach(ListViewItem item in listView1.Items)
+            foreach (ListViewItem item in listView1.Items)
             {
                 item.BackColor = Color.White;
                 if (item.ToString().IndexOf(input, StringComparison.OrdinalIgnoreCase) >= 0)
-                    item.BackColor = Color.DeepSkyBlue;                    
+                    item.BackColor = Color.DeepSkyBlue;
             }
         }
 
         private void button5_Click(object sender, EventArgs e)
         {
             List<List<string>> selectedPolicies = new List<List<string>>();
-            Scanner scanner = new Scanner(selectedPolicies);
+            List<string> policy = new List<string>();
+
+            foreach (int index in listView1.CheckedIndices)
+            {
+                foreach (string s in fileContent[index])
+                    policy.Add(s);
+                selectedPolicies.Add(policy);
+                policy = new List<string>();
+            }
         }
     }
 }
