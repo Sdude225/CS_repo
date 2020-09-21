@@ -47,7 +47,6 @@ namespace CS_App
                     foreach (string str in s)
                         if (str.Trim().StartsWith("description"))
                             checkedListBox1.Items.Add(str.Replace("description", ""));
-                checkedListBox1.SetSelected(checkedListBox1.SelectedIndex, false);
                 fileContent = parser.getParsedText();
             }
 
@@ -129,6 +128,15 @@ namespace CS_App
         private void button5_Click(object sender, EventArgs e)
         {
             List<List<string>> selectedPolicies = new List<List<string>>();
+            List<string> policy = new List<string>();
+
+            foreach(int index in checkedListBox1.CheckedIndices)
+            {
+                foreach(string s in fileContent[index])
+                    policy.Add(s);
+                selectedPolicies.Add(policy);
+                policy = new List<string>();
+            }
 
             Scanner scanner = new Scanner(selectedPolicies);
         }
