@@ -49,7 +49,7 @@ namespace CS_App
             foreach (int index in listView1.CheckedIndices)
                 System.IO.File.AppendAllLines(filePath, fileContent[index]);
         }
-
+        
         private void button3_Click(object sender, EventArgs e)
         {
             if (button3.Text == "Select All")
@@ -92,6 +92,8 @@ namespace CS_App
                 selectedPolicies.Add(policy);
                 policy = new List<string>();
             }
+
+            Scanner scanner = new Scanner(selectedPolicies);
         }
     }
 }
