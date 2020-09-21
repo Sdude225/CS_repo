@@ -12,7 +12,6 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
-using System.Xml;
 
 namespace CS_App
 {
@@ -20,64 +19,36 @@ namespace CS_App
     {
         public List<List<string>> fileContent = null;
             
-        public Form1()
-        {
-            InitializeComponent();
-        }
+        public Form1() { InitializeComponent(); }
 
-        private void Form1_Load(object sender, EventArgs e)
-        {
-
-        }
-
-
-        //CIS_MS_Windows_10_Enterprise_Next_Generation_Windows_Security_v1.6.1.audit
+        private void Form1_Load(object sender, EventArgs e) { }
         private void button1_Click(object sender, EventArgs e)
         {
-            checkedListBox1.Items.Clear();
-
+            listView1.Items.Clear();
             var file = new OpenFileDialog();
             file.Filter = "Audit files (*.audit)|*.audit";
-            if(file.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            if(file.ShowDialog() == DialogResult.OK)
             {
                 Parser parser = new Parser(file.FileName);
-                System.IO.StreamReader tmp = new System.IO.StreamReader(file.FileName);
-
+                StreamReader tmp = new StreamReader(file.FileName);
                 foreach (List<string> s in parser.getParsedText())
                     foreach (string str in s)
                         if (str.Trim().StartsWith("description"))
-                            checkedListBox1.Items.Add(str.Replace("description", ""));
-                checkedListBox1.SetSelected(checkedListBox1.SelectedIndex, false);
+                            listView1.Items.Add(str.Replace("description", ""));
                 fileContent = parser.getParsedText();
             }
-
-
-            textBox1.Text = Path.GetFileName(file.FileName);
-            
+            textBox1.Text = Path.GetFileName(file.FileName);            
         }
-
-
 
         private void button2_Click(object sender, EventArgs e)
         {
             var filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SBT");
             System.IO.Directory.CreateDirectory(filePath);
             filePath = Path.Combine(filePath, textBox1.Text);
-
             System.IO.File.WriteAllText(filePath, "");
-            
-
-            foreach (int index in checkedListBox1.CheckedIndices)
+            foreach (int index in listView1.CheckedIndices)
                 System.IO.File.AppendAllLines(filePath, fileContent[index]);
-            
         }
-
-        private void CallRecursive(bool value)
-        {
-            for(int i = 0; i < checkedListBox1.Items.Count; i++)
-                checkedListBox1.SetItemChecked(i, value);
-        }
-
 
         private void button3_Click(object sender, EventArgs e)
         {
@@ -92,44 +63,26 @@ namespace CS_App
                 button3.Text = "Select All";
             }
         }
+        private void CallRecursive(bool value)
+        {
+            foreach (ListViewItem item in listView1.Items)
+                item.Checked = value;
+        }
 
         private void button4_Click(object sender, EventArgs e)
         {
             string input = Microsoft.VisualBasic.Interaction.InputBox("Insert desired word", "Search");
-
-            if (input.Length == 0)
+            foreach(ListViewItem item in listView1.Items)
             {
-                checkedListBox1.Items.Clear();
-                foreach (List<string> s in fileContent)
-                    foreach (string line in s)
-                        if (line.Trim().StartsWith("description"))
-                            checkedListBox1.Items.Add(line.Replace("description", ""));
+                item.BackColor = Color.White;
+                if (item.ToString().IndexOf(input, StringComparison.OrdinalIgnoreCase) >= 0)
+                    item.BackColor = Color.DeepSkyBlue;                    
             }
-
-            List<string> searchedItems = new List<string>();
-
-            foreach(string item in checkedListBox1.Items)
-            {
-                if (item.IndexOf(input, StringComparison.OrdinalIgnoreCase) >= 0)
-                    searchedItems.Add(item);
-            }
-
-            if(searchedItems.Count == 0)
-            {
-                MessageBox.Show("Search querry yeilded no result, try again");
-                button4_Click(sender, e);
-            }
-
-            checkedListBox1.Items.Clear();
-
-            foreach (string s in searchedItems)
-                checkedListBox1.Items.Add(s);
         }
 
         private void button5_Click(object sender, EventArgs e)
         {
             List<List<string>> selectedPolicies = new List<List<string>>();
-
             Scanner scanner = new Scanner(selectedPolicies);
         }
     }

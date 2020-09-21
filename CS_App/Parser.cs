@@ -18,7 +18,8 @@ namespace CS_App
             string line = null;
             bool flg = false;
             System.IO.StreamReader file = new System.IO.StreamReader(filePath);
-            Regex rgx0 = new Regex("^\\s+\\b(type|description|value_type|value_data|reg_key|reg_item|check_type|reg_option|password_policy|audit_policy_subcategory)\\b");
+            Regex rgx0 = new Regex("^\\s+\\b(type|description|value_type|value_data|reg_key|" +
+                "reg_item|check_type|reg_option|password_policy|audit_policy_subcategory)\\b");
             Regex rgx1 = new Regex("(^\\s*\\<\\b(custom_item)\\b)|(^\\s*\\<\\/\\b(custom_item)\\b)");
             while ((line = file.ReadLine()) != null)
             {
