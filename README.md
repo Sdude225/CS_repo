@@ -12,13 +12,3 @@ In the end we can choose how the new file will be named, and it is saved in AppD
 Video demonstration of inplemented features: https://youtu.be/rJhRBEcN6Vw
 
 Main implementation code can be found in Form1.cs Parser.cs, Scanner.cs, SamServer.cs
-
-
-
-<table border="6" bgcolor="red">
-  <tr bgcolor="red">
-    <th bgcolor = "red">Month</th>
-    <th>Savings</th>
-  </tr>
-  </table>
-
