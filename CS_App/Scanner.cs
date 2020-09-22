@@ -37,7 +37,7 @@ namespace CS_App
                 sw.WriteLine("cd " + filePath);
                 sw.WriteLine("secedit.exe /export /cfg " + filePath + @"\security_policy.inf");
             }
-            p.Close();
+            p.WaitForExit();
             
             filePath = Path.Combine(filePath, "security_policy.inf");
             var lines = File.ReadLines(filePath);
@@ -58,6 +58,12 @@ namespace CS_App
                         break;
                     case "LOCKOUT_POLICY":
                         lockoutPolicyCheck(s, lines, index);
+                        break;
+                    case "REGISTRY_SETTING":
+                        registryPolicyCheck(s, lines, index);
+                        break;
+                    default:
+                        listView1.Items[index].BackColor = Color.Gray;
                         break;
                 }
                 i++;
@@ -185,6 +191,63 @@ namespace CS_App
                 case "LOCKOUT_RESET":
                     listView1.Items[index].BackColor = Color.Gray;
                     break;
+            }
+
+        }
+
+        public void registryPolicyCheck(List<string> registryPolicy, IEnumerable<string> localPolicies, int index)
+        {
+            string reg_key = registryPolicy.FirstOrDefault(str => str.Contains("reg_key"));
+            string reg_item = registryPolicy.FirstOrDefault(str => str.Contains("reg_item"));
+
+            reg_key = reg_key.Trim();
+            reg_key = reg_key.Substring(reg_key.IndexOf('"'), reg_key.Length - reg_key.IndexOf('"'));
+
+            reg_item = reg_item.Trim();
+            reg_item = reg_item.Substring(reg_item.IndexOf('"'), reg_item.Length  - reg_item.IndexOf('"'));
+
+            string value_type = registryPolicy.FirstOrDefault(str => str.Contains("value_type"));
+            string value_data = registryPolicy.FirstOrDefault(str => str.Contains("value_data"));
+
+            string cmdQuery = "reg query " +  reg_key + " /v " + reg_item;
+
+
+            Process process = new Process();
+            process.StartInfo.FileName = "cmd.exe";
+            process.StartInfo.Arguments = "/c " + cmdQuery;
+            process.StartInfo.UseShellExecute = false;
+            process.StartInfo.RedirectStandardOutput = true;
+            process.StartInfo.RedirectStandardError = true;
+            process.Start();
+            string output = process.StandardOutput.ReadToEnd();
+            string err = process.StandardError.ReadToEnd();
+            process.WaitForExit();
+            if(err.Length != 0)
+            {
+                listView1.Items[index].BackColor = Color.LightGray;
+            }
+            else
+            {
+                value_data = Regex.Replace(value_data, @"\s+", "");
+                value_data = value_data.Replace("value_data:", "");
+                value_data = value_data.Substring(value_data.IndexOf('"') + 1, 1);
+                if (value_data[0] == '[') value_data = "1";
+                try
+                {
+                    int tmp = Int32.Parse(value_data);
+                    string[] outputLines = output.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
+
+                    Match val = Regex.Match(outputLines[1], "0[xX][0-9a-fA-F]+");
+                    int valNatural = Convert.ToInt32(val.Value, 16);
+                    if (valNatural == tmp)
+                        listView1.Items[index].BackColor = Color.Green;
+                    else
+                        listView1.Items[index].BackColor = Color.Red;
+                }
+                catch (Exception e)
+                {
+                    listView1.Items[index].BackColor = Color.LightGray;
+                }
             }
 
         }
