@@ -16,5 +16,9 @@ Main implementation code can be found in Form1.cs Parser.cs, Scanner.cs, SamServ
 
 
 <table border="6" bgcolor="red">
+  <tr bgcolor="red">
+    <th bgcolor = "red">Month</th>
+    <th>Savings</th>
+  </tr>
   </table>
 
