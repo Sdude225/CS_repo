@@ -5,14 +5,16 @@ Lab work was done in 2, with Dodi Cristian-Dumitru
 
 The programming language used is C#, .NET framework for easy creation of application forms and dialogs.
 
-Upon inspection of .audit file, we observed that they structure is similar to .xml files. 
+After parsing, we simply display the list of desciptions from custom_item
 
-The logic of the program is to modify .audit so they could be parsed as xml.
+We can choose different descriptions from the list and set desired name of the file, it is saved in AppData/Local/SBT folder.
 
-Afterwards, we simply display the xml as a tree view.
-
-In the end we can choose how the new file will be named, and it is saved in AppData/Local/SBT folder.
+Pressing "Scan" button will scan the system for the choosed and will display following info:
+items with red background color - failed <br>
+light grey - not found/do not exist <br>
+dark grey - not implemented yet for that custom_item <br>
+green - passed <br>
 
 Video demonstration of inplemented features: https://youtu.be/rJhRBEcN6Vw
 
-Main implementation code can be found in Form1.cs
+Main implementation code can be found in Form1.cs, Pareser.cs, Scanner.cs, SamServer.cs
