@@ -15,5 +15,5 @@ Main implementation code can be found in Form1.cs Parser.cs, Scanner.cs, SamServ
 
 
 
-<table border="1" bgcolor="red">
+<table border="6" bgcolor="red">
 
