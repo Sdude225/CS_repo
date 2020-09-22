@@ -9,7 +9,8 @@ After parsing, we simply display the list of desciptions from custom_item
 
 We can choose different descriptions from the list and set desired name of the file, it is saved in AppData/Local/SBT folder.
 
-Pressing "Scan" button will scan the system for the choosed and will display following info:
+Pressing "Scan" button will scan the system for the choosed items.<br>
+Pressing "Apply" compare local configuration with audit and will display following info:
 items with red background color - failed <br>
 light grey - not found/do not exist <br>
 dark grey - not implemented yet for that custom_item <br>
