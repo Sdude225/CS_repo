@@ -16,7 +16,7 @@ Main implementation code can be found in Form1.cs Parser.cs, Scanner.cs, SamServ
 
 
 <table>
-    <tr bgcolor = "red">
+    <tr bgcolor="lightblue>
         <td>Foo</td>
     </tr>
 </table>
