@@ -10,7 +10,10 @@ After parsing, we simply display the list of desciptions from <custom_item>
 We can choose different descriptions from the list and set desired name of the file, it is saved in AppData/Local/SBT folder.
 
 Pressing "Scan" button will scan the system for the choosed and will display following info:
-<div class = ""box red></div>
+items with red background color - failed 
+light grey - not found/do not exist
+dark grey - not implemented yet for that <custom_item>
+green - passed
 
 Video demonstration of inplemented features: https://youtu.be/rJhRBEcN6Vw
 
