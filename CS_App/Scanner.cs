@@ -15,6 +15,7 @@ namespace CS_App
 {
     class Scanner : Form
     {
+        List<ICustom_Item> custom_Items = new List<ICustom_Item>();
         List<string> localSecurityPolicies = new List<string>();
         ListView listView1 = Application.OpenForms["Form1"].Controls["listView1"] as ListView;
 
@@ -72,7 +73,9 @@ namespace CS_App
 
         public void passwordPolicyCheck(List<string> passwordPolicy, IEnumerable<string> localPolicies, int index)
         {
-            string pass = passwordPolicy.FirstOrDefault(str => str.Contains("password_policy"));
+            custom_Items.Add(new PASSWORD_POLICY(passwordPolicy));
+
+            /*string pass = passwordPolicy.FirstOrDefault(str => str.Contains("password_policy"));
             pass = Regex.Replace(pass, @"\s+", "");
             pass = pass.Replace("password_policy:", "");
             string localValue;
@@ -154,7 +157,7 @@ namespace CS_App
                     else
                         listView1.Items[index].BackColor = Color.Red;
                     break;
-            }
+            }*/
         }
 
         public void lockoutPolicyCheck(List<string> lockoutPolicy, IEnumerable<string> localPolicies, int index)

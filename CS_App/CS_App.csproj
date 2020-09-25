@@ -53,11 +53,15 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="ICustom_Item.cs" />
     <Compile Include="Parser.cs" />
+    <Compile Include="PASSWORD_POLICY.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SamServer.cs" />
-    <Compile Include="Scanner.cs" />
+    <Compile Include="Scanner.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
       <Generator>PublicResXFileCodeGenerator</Generator>
