@@ -9,6 +9,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml;
 using System.Xml.Schema;
 
 namespace CS_App
@@ -55,13 +56,29 @@ namespace CS_App
                 switch (type)
                 {
                     case "PASSWORD_POLICY":
-                        passwordPolicyCheck(s, lines, index);
+                        PASSWORD_POLICY pass_pol = new PASSWORD_POLICY(s);
+                        custom_Items.Add(pass_pol);
+                        passwordPolicyCheck(pass_pol, lines, index);
                         break;
                     case "LOCKOUT_POLICY":
-                        lockoutPolicyCheck(s, lines, index);
+                        LOCKOUT_POLICY lock_pol = new LOCKOUT_POLICY(s);
+                        custom_Items.Add(lock_pol);
+                        lockoutPolicyCheck(lock_pol, lines, index);
                         break;
                     case "REGISTRY_SETTING":
-                        registryPolicyCheck(s, lines, index);
+                        REGISTRY_SETTING reg_pol = new REGISTRY_SETTING(s);
+                        custom_Items.Add(reg_pol);
+                        registryPolicyCheck(reg_pol, lines, index);
+                        break;
+                    case "CHECK_ACCOUNT":
+                        CHECK_ACCOUNT chk_pol = new CHECK_ACCOUNT(s);
+                        custom_Items.Add(chk_pol);
+                        checkAccount(chk_pol, lines, index);
+                        break;
+                    case "BANNER_CHECK":
+                        BANNER_CHECK ban_pol = new BANNER_CHECK(s);
+                        custom_Items.Add(ban_pol);
+                        bannerCheck(ban_pol, lines, index);
                         break;
                     default:
                         listView1.Items[index].BackColor = Color.Gray;
@@ -71,76 +88,55 @@ namespace CS_App
             }
         }
 
-        public void passwordPolicyCheck(List<string> passwordPolicy, IEnumerable<string> localPolicies, int index)
+        public void passwordPolicyCheck(PASSWORD_POLICY passwordPolicy, IEnumerable<string> localPolicies, int index)
         {
-            custom_Items.Add(new PASSWORD_POLICY(passwordPolicy));
-
-            /*string pass = passwordPolicy.FirstOrDefault(str => str.Contains("password_policy"));
-            pass = Regex.Replace(pass, @"\s+", "");
-            pass = pass.Replace("password_policy:", "");
+            List<string> minMaxList = new List<string>();
             string localValue;
             string tmp;
-            int val;
-            string value_data;
-            int min_value;
-            int max_value;
-
-
-            switch (pass)
+            string minValue;
+            switch(passwordPolicy.PasswordType)
             {
                 case "ENFORCE_PASSWORD_HISTORY":
                     localValue = localPolicies.FirstOrDefault(s => s.Contains("PasswordHistorySize"));
-                    tmp = localValue.Substring(localValue.LastIndexOf('=') + 1, localValue.Length - 1 - localValue.LastIndexOf('='));
-                    val = Int32.Parse(tmp);
-                    if (val == 1)
+                    tmp = Regex.Match(localValue, @"-?\d+").Value;
+                    minValue = Regex.Match(passwordPolicy.Value_Data, @"-?\d+").Value;
+                    if (Int32.Parse(tmp) >= Int32.Parse(minValue))
                         listView1.Items[index].BackColor = Color.Green;
                     else
                         listView1.Items[index].BackColor = Color.Red;
                     break;
                 case "MAXIMUM_PASSWORD_AGE":
                     localValue = localPolicies.FirstOrDefault(s => s.Contains("MaximumPasswordAge"));
-                    tmp = localValue.Substring(localValue.LastIndexOf('=') + 1, localValue.Length - 1 - localValue.LastIndexOf('='));
-                    value_data = passwordPolicy.FirstOrDefault(str => str.Contains("value_data"));
-                    value_data = Regex.Replace(value_data, @"\s+", "");
-                    value_data = value_data.Replace("value_data:", "");
-                    val = int.Parse(tmp, NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite | NumberStyles.AllowLeadingSign);
-                    min_value = Int32.Parse(value_data.Substring(1, value_data.IndexOf('.') - 1));
-                    max_value = int.Parse(value_data.Substring(value_data.LastIndexOf('.') + 1, value_data.Length - 1 - value_data.LastIndexOf('.') - 1));
-                    if (val >= min_value && val <= max_value)
+                    tmp = Regex.Match(localValue, @"-?\d+").Value;
+                    foreach(Match match in Regex.Matches(passwordPolicy.Value_Data, @"-?\d+"))
+                        minMaxList.Add(match.Value);
+                    if (Int32.Parse(tmp) >= Int32.Parse(minMaxList[0]) && Int32.Parse(tmp) <= Int32.Parse(minMaxList[1]))
                         listView1.Items[index].BackColor = Color.Green;
                     else
                         listView1.Items[index].BackColor = Color.Red;
                     break;
                 case "MINIMUM_PASSWORD_AGE":
                     localValue = localPolicies.FirstOrDefault(s => s.Contains("MinimumPasswordAge"));
-                    val = (int)localValue[localValue.Count() - 1] - 48;
-                    value_data = passwordPolicy.FirstOrDefault(str => str.Contains("value_data"));
-                    value_data = Regex.Replace(value_data, @"\s+", "");
-                    value_data = value_data.Replace("value_data:", "");
-                    min_value = Int32.Parse(value_data.Substring(1, value_data.IndexOf('.') - 1));
-                    if (val >= min_value)
+                    tmp = Regex.Match(localValue, @"-?\d+").Value;
+                    minValue = Regex.Match(passwordPolicy.Value_Data, @"-?\d+").Value;
+                    if (Int32.Parse(tmp) >= Int32.Parse(minValue))
                         listView1.Items[index].BackColor = Color.Green;
                     else
                         listView1.Items[index].BackColor = Color.Red;
                     break;
                 case "MINIMUM_PASSWORD_LENGTH":
                     localValue = localPolicies.FirstOrDefault(s => s.Contains("MinimumPasswordLength"));
-                    tmp = localValue.Substring(localValue.LastIndexOf('=') + 1, localValue.Length - 1 - localValue.LastIndexOf('='));
-                    val = Int32.Parse(tmp);
-                    value_data = passwordPolicy.FirstOrDefault(str => str.Contains("value_data"));
-                    value_data = Regex.Replace(value_data, @"\s+", "");
-                    value_data = value_data.Replace("value_data:", "");
-                    min_value = Int32.Parse(value_data.Substring(1, value_data.IndexOf('.') - 1));
-                    if (val >= min_value)
+                    tmp = Regex.Match(localValue, @"-?\d+").Value;
+                    minValue = Regex.Match(passwordPolicy.Value_Data, @"-?\d+").Value;
+                    if (Int32.Parse(tmp) >= Int32.Parse(minValue))
                         listView1.Items[index].BackColor = Color.Green;
                     else
                         listView1.Items[index].BackColor = Color.Red;
                     break;
                 case "COMPLEXITY_REQUIREMENTS":
                     localValue = localPolicies.FirstOrDefault(s => s.Contains("PasswordComplexity"));
-                    tmp = localValue.Substring(localValue.LastIndexOf('=') + 1, localValue.Length - 1 - localValue.LastIndexOf('='));
-                    val = Int32.Parse(tmp);
-                    if (val == 1)
+                    tmp = Regex.Match(localValue, @"-?\d+").Value;
+                    if (Int32.Parse(tmp) == Int32.Parse(passwordPolicy.Value_Data))
                         listView1.Items[index].BackColor = Color.Green;
                     else
                         listView1.Items[index].BackColor = Color.Red;
@@ -150,43 +146,29 @@ namespace CS_App
                     break;
                 case "FORCE_LOGOFF":
                     localValue = localPolicies.FirstOrDefault(s => s.Contains("ForceLogoffWhenHourExpire"));
-                    tmp = localValue.Substring(localValue.LastIndexOf('=') + 1, localValue.Length - 1 - localValue.LastIndexOf('='));
-                    val = Int32.Parse(tmp);
-                    if (val == 1)
+                    tmp = Regex.Match(localValue, @"-?\d+").Value;
+                    if (Int32.Parse(tmp) == Int32.Parse(passwordPolicy.Value_Data))
                         listView1.Items[index].BackColor = Color.Green;
                     else
                         listView1.Items[index].BackColor = Color.Red;
                     break;
-            }*/
+            }
         }
 
-        public void lockoutPolicyCheck(List<string> lockoutPolicy, IEnumerable<string> localPolicies, int index)
+        public void lockoutPolicyCheck(LOCKOUT_POLICY lockoutPolicy, IEnumerable<string> localPolicies, int index)
         {
-            string lockout = lockoutPolicy.FirstOrDefault(str => str.Contains("lockout_policy"));
-            lockout = Regex.Replace(lockout, @"\s+", "");
-            lockout = lockout.Replace("lockout_policy:", "");
-            string localValue;
-            string tmp;
-            int val;
-            string value_data;
-            int min_value;
-            int max_value;
-            
-            switch(lockout)
+            switch(lockoutPolicy.LockoutType)
             {
                 case "LOCKOUT_DURATION":
                     listView1.Items[index].BackColor = Color.Gray;
                     break;
                 case "LOCKOUT_THRESHOLD":
-                    localValue = localPolicies.FirstOrDefault(s => s.Contains("LockoutBadCount"));
-                    tmp = localValue.Substring(localValue.LastIndexOf('=') + 1, localValue.Length - 1 - localValue.LastIndexOf('='));
-                    value_data = lockoutPolicy.FirstOrDefault(str => str.Contains("value_data"));
-                    value_data = Regex.Replace(value_data, @"\s+", "");
-                    value_data = value_data.Replace("value_data:", "");
-                    val = int.Parse(tmp, NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite | NumberStyles.AllowLeadingSign);
-                    min_value = Int32.Parse(value_data.Substring(1, value_data.IndexOf('.') - 1));
-                    max_value = int.Parse(value_data.Substring(value_data.LastIndexOf('.') + 1, value_data.Length - 1 - value_data.LastIndexOf('.') - 1));
-                    if (val >= min_value && val <= max_value)
+                    string localValue = localPolicies.FirstOrDefault(s => s.Contains("LockoutBadCount"));
+                    string tmp = Regex.Match(localValue, @"-?\d+").Value;
+                    List<string> minMaxList = new List<string>();
+                    foreach (Match match in Regex.Matches(lockoutPolicy.Value_Data, @"-?\d+"))
+                        minMaxList.Add(match.Value);
+                    if (Int32.Parse(tmp) >= Int32.Parse(minMaxList[0]) && Int32.Parse(tmp) <= Int32.Parse(minMaxList[1]))
                         listView1.Items[index].BackColor = Color.Green;
                     else
                         listView1.Items[index].BackColor = Color.Red;
@@ -198,61 +180,76 @@ namespace CS_App
 
         }
 
-        public void registryPolicyCheck(List<string> registryPolicy, IEnumerable<string> localPolicies, int index)
+        public void registryPolicyCheck(REGISTRY_SETTING registryPolicy, IEnumerable<string> localPolicies, int index)
         {
-            string reg_key = registryPolicy.FirstOrDefault(str => str.Contains("reg_key"));
-            string reg_item = registryPolicy.FirstOrDefault(str => str.Contains("reg_item"));
+            string output = null;
+            string err = null;
+            registryPolicy.checkQuery(ref output, ref err);
 
-            reg_key = reg_key.Trim();
-            reg_key = reg_key.Substring(reg_key.IndexOf('"'), reg_key.Length - reg_key.IndexOf('"'));
-
-            reg_item = reg_item.Trim();
-            reg_item = reg_item.Substring(reg_item.IndexOf('"'), reg_item.Length  - reg_item.IndexOf('"'));
-
-            string value_type = registryPolicy.FirstOrDefault(str => str.Contains("value_type"));
-            string value_data = registryPolicy.FirstOrDefault(str => str.Contains("value_data"));
-
-            string cmdQuery = "reg query " +  reg_key + " /v " + reg_item;
-
-
-            Process process = new Process();
-            process.StartInfo.FileName = "cmd.exe";
-            process.StartInfo.Arguments = "/c " + cmdQuery;
-            process.StartInfo.UseShellExecute = false;
-            process.StartInfo.RedirectStandardOutput = true;
-            process.StartInfo.RedirectStandardError = true;
-            process.Start();
-            string output = process.StandardOutput.ReadToEnd();
-            string err = process.StandardError.ReadToEnd();
-            process.WaitForExit();
-            if(err.Length != 0)
-            {
+            if (err.Length != 0)
                 listView1.Items[index].BackColor = Color.LightGray;
-            }
             else
             {
-                value_data = Regex.Replace(value_data, @"\s+", "");
-                value_data = value_data.Replace("value_data:", "");
-                value_data = value_data.Substring(value_data.IndexOf('"') + 1, 1);
-                if (value_data[0] == '[') value_data = "1";
-                try
+                if (!registryPolicy.compareRegister(output))
+                    listView1.Items[index].BackColor = Color.Red;
+                else
                 {
-                    int tmp = Int32.Parse(value_data);
-                    string[] outputLines = output.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
-
-                    Match val = Regex.Match(outputLines[1], "0[xX][0-9a-fA-F]+");
-                    int valNatural = Convert.ToInt32(val.Value, 16);
-                    if (valNatural == tmp)
-                        listView1.Items[index].BackColor = Color.Green;
-                    else
-                        listView1.Items[index].BackColor = Color.Red;
-                }
-                catch (Exception e)
-                {
-                    listView1.Items[index].BackColor = Color.LightGray;
+                    listView1.Items[index].BackColor = Color.Green;
                 }
             }
+        }
 
+        public void checkAccount(CHECK_ACCOUNT chkAccPolicy, IEnumerable<string> localPolicies, int index)
+        {
+            string localValue;
+            string val;
+            switch(chkAccPolicy.Account_Type)
+            {
+                case "ADMINISTRATOR_ACCOUNT":
+                    if (chkAccPolicy.Value_Type == "POLICY_SET")
+                    {
+                        localValue = localPolicies.FirstOrDefault(s => s.Contains("EnableAdminAccount"));
+                        val = Regex.Match(localValue, @"\d+").Value;
+                        if (Int32.Parse(chkAccPolicy.Value_Data) == Int32.Parse(val))
+                            listView1.Items[index].BackColor = Color.Green;
+                        else
+                            listView1.Items[index].BackColor = Color.Red;
+                    }
+                    else
+                        listView1.Items[index].BackColor = Color.Green;
+                    break;
+                case "GUEST_ACCOUNT":
+                    if (chkAccPolicy.Value_Type == "POLICY_SET")
+                    {
+                        localValue = localPolicies.FirstOrDefault(s => s.Contains("EnableGuestAccount"));
+                        val = Regex.Match(localValue, @"\d+").Value;
+                        if (Int32.Parse(chkAccPolicy.Value_Data) == Int32.Parse(val))
+                            listView1.Items[index].BackColor = Color.Green;
+                        else
+                            listView1.Items[index].BackColor = Color.Red;
+                    }
+                    else
+                        listView1.Items[index].BackColor = Color.Green;
+                    break;
+            }
+        }
+
+        public void bannerCheck(BANNER_CHECK bannerPolicy, IEnumerable<string> localPolicies, int index)
+        {
+            string output = null;
+            string err = null;
+
+            bannerPolicy.checkQuery(ref output, ref err);
+
+            if (err.Length != 0)
+                listView1.Items[index].BackColor = Color.LightGray;
+            else
+            {
+                if (!bannerPolicy.compareReg(output))
+                    listView1.Items[index].BackColor = Color.Red;
+                else
+                    listView1.Items[index].BackColor = Color.Green;
+            }
         }
     }
 }

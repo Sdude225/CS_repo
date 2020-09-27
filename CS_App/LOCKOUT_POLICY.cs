@@ -7,16 +7,8 @@ using System.Threading.Tasks;
 
 namespace CS_App
 {
-    public class PASSWORD_POLICY : ICustom_Item
+    class LOCKOUT_POLICY : ICustom_Item
     {
-        string type;
-
-        public string Type
-        {
-            get { return type; }
-
-            set { this.type = value; }
-        }
         string description;
 
         public string Description
@@ -25,6 +17,16 @@ namespace CS_App
 
             set { this.description = value; }
         }
+
+        string type;
+
+        public string Type
+        {
+            get { return type; }
+
+            set { this.type = value; }
+        }
+
         string value_data;
 
         public string Value_Data
@@ -33,39 +35,40 @@ namespace CS_App
 
             set { this.value_data = value; }
         }
+
         string value_type;
 
         public string Value_Type
-        { 
+        {
             get { return value_type; }
 
             set { this.value_type = value; }
         }
 
-        string password_policy;
+        string lockoutPolicyType;
 
-        public string PasswordType
+        public string LockoutType
         {
-            get { return password_policy; }
+            get { return lockoutPolicyType; }
 
-            set { this.password_policy = value; }
+            set { lockoutPolicyType = value; }
         }
 
-        public PASSWORD_POLICY(List<string> password_policy)
+        public LOCKOUT_POLICY(List<string> lockoutPolicy)
         {
-            Type = "PASSWORD_POLICY";
+            Type = "LOCKOUT_POLICY";
 
-            setDescription(password_policy.FirstOrDefault(s => s.Contains("description")));
-            setValueData(password_policy.FirstOrDefault(s => s.Contains("value_data")));
-            setValueType(password_policy.FirstOrDefault(s => s.Contains("value_type")));
-            setPasswordPolicy(password_policy.FirstOrDefault(s => s.Contains("password_policy")));
+            setDescription(lockoutPolicy.FirstOrDefault(s => s.Contains("description")));
+            setValueData(lockoutPolicy.FirstOrDefault(s => s.Contains("value_data")));
+            setValueType(lockoutPolicy.FirstOrDefault(s => s.Contains("value_type")));
+            setLockoutType(lockoutPolicy.FirstOrDefault(s => s.Contains("lockout_policy")));
         }
 
-        public void setPasswordPolicy(string password)
+        public void setLockoutType(string lockout)
         {
-            password = Regex.Replace(password, @"\s+", "");
-            password = password.Replace("password_policy:", "");
-            PasswordType = password;
+            lockout = Regex.Replace(lockout, @"\s+", "");
+            lockout = lockout.Replace("lockout_policy:", "");
+            LockoutType = lockout;
         }
 
         public void setValueType(string value_type)
@@ -74,6 +77,7 @@ namespace CS_App
             value_type = value_type.Replace("value_type:", "");
             Value_Type = value_type;
         }
+
         public void setValueData(string value_data)
         {
             value_data = Regex.Replace(value_data, @"\s+", "");

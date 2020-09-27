@@ -8,6 +8,13 @@ namespace CS_App
 {
     public interface ICustom_Item
     {
-        object type { get; set; }
+        string Type { get; set; }
+
+        string Description { get; set; }
+
+        string Value_Data { get; set; }
+
+        string Value_Type { get; set; }
+
     }
 }
