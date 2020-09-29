@@ -12,3 +12,9 @@ In the end we can choose how the new file will be named, and it is saved in AppD
 Video demonstration of inplemented features: https://youtu.be/rJhRBEcN6Vw
 
 Main implementation code can be found in Form1.cs Parser.cs, Scanner.cs, SamServer.cs
+
+<figure class="video_container">
+  <video controls="true" allowfullscreen="true" poster="path/to/poster_image.png">
+    <source src="https://youtu.be/rJhRBEcN6Vw" type="video/mp4">
+  </video>
+</figure>
