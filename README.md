@@ -14,7 +14,7 @@ Video demonstration of inplemented features: https://youtu.be/rJhRBEcN6Vw
 Main implementation code can be found in Form1.cs Parser.cs, Scanner.cs, SamServer.cs
 
 <figure class="video_container">
-  <video controls="true" allowfullscreen="true" poster="path/to/poster_image.png">
+  <video controls="true" allowfullscreen="true">
     <source src="https://youtu.be/rJhRBEcN6Vw" type="video/mp4">
   </video>
 </figure>
