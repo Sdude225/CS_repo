@@ -37,12 +37,13 @@ namespace CS_App
             using(StreamWriter sw = p.StandardInput)
             {
                 sw.WriteLine("cd " + filePath);
-                sw.WriteLine("secedit.exe /export /cfg " + filePath + @"\security_policy.inf");
+                sw.WriteLine("secedit.exe /export /cfg " + filePath + @"\security_policy.cfg");
             }
             p.WaitForExit();
             
-            filePath = Path.Combine(filePath, "security_policy.inf");
+            filePath = Path.Combine(filePath, "security_policy.cfg");
             var lines = File.ReadLines(filePath);
+            localSecurityPolicies = lines.ToList();
 
             int index;
             int i = 0;
@@ -250,6 +251,16 @@ namespace CS_App
                 else
                     listView1.Items[index].BackColor = Color.Green;
             }
+        }
+
+        public List<ICustom_Item> GetCustom_Items()
+        {
+            return custom_Items;
+        }
+
+        public List<string> GetLocalPolicy()
+        {
+            return localSecurityPolicies;
         }
     }
 }

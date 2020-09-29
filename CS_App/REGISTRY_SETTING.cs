@@ -65,6 +65,15 @@ namespace CS_App
             set { this.reg_item = value; }
         }
 
+        string localRegValue;
+
+        public string LOCALREGVALUE
+        {
+            get { return localRegValue; }
+
+            set { this.localRegValue = value; }
+        }
+
         public REGISTRY_SETTING(List<string> registryPolicy)
         {
             Type = "REGISTRY_SETTING";
@@ -92,6 +101,7 @@ namespace CS_App
                         case "POLICY_DWORD":
                             foreach (Match match in Regex.Matches(Value_Data, @"-?\d+"))
                                 minMaxValues.Add(match.Value);
+                            LOCALREGVALUE = regSet[2];
                             if(minMaxValues.Count == 1)
                             {
                                 if (Int32.Parse(minMaxValues[0]) == Convert.ToInt32(regSet[2], 16))
