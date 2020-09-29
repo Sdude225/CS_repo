@@ -14,8 +14,6 @@ After execution,we can see a list of descriptions of different color:
  * dark grey - not implemented yet for that custom_item<br>
  * green - passed
 <figure class="video_container">
-  <video controls="true" allowfullscreen="false">
-    <source src="https://github.com/Sdude225/CS_repo/tree/crazy-experiment/video/Pavlov_Dodi_Lab4_ScreenRecroding.mp4" type="video/mp4">
-  </video>
+  <iframe src="https://github.com/Sdude225/CS_repo/tree/crazy-experiment/video/Pavlov_Dodi_Lab4_ScreenRecroding.mp4" frameborder="0" allowfullscreen="true"> </iframe>
 </figure>
 Main implementation code can be found in Form1.cs, Pareser.cs, Scanner.cs, SamServer.cs
