@@ -13,5 +13,5 @@ After execution,we can see a list of descriptions of different color:
  * light grey - not found/do not exist<br>
  * dark grey - not implemented yet for that custom_item<br>
  * green - passed <br>
-Video demonstration of inplemented features:https://utm-my.sharepoint.com/:v:/g/personal/mihail_gavrilita_faf_utm_md/EWuBNMmXQedMolgZekSzqQwBihep4JhweBJo96IyyEQ05A?e=cgqE0J <br>
+Video demonstration of implemented features:https://utm-my.sharepoint.com/:v:/g/personal/mihail_gavrilita_faf_utm_md/EUzZHdPZ9zxDvR-Hush6BdEB0PKe7N6NM8JbER6BqNIzhg?e=JrQLsT <br>
 Main implementation code can be found in Form1.cs, Pareser.cs, Scanner.cs, SamServer.cs
